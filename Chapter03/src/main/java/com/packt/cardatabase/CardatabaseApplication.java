@@ -8,6 +8,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.packt.cardatabase.domain.AppUser;
+import com.packt.cardatabase.domain.AppUserRepository;
 import com.packt.cardatabase.domain.Car;
 import com.packt.cardatabase.domain.CarRepository;
 import com.packt.cardatabase.domain.Owner;
@@ -19,10 +21,12 @@ public class CardatabaseApplication implements CommandLineRunner {
 
 	private final CarRepository repository;
 	private final OwnerRepository orepository;
+	private final AppUserRepository urepository;
 
-	public CardatabaseApplication(CarRepository repository, OwnerRepository orepository) {
+	public CardatabaseApplication(CarRepository repository, OwnerRepository orepository, AppUserRepository urepository) {
 		this.repository = repository;
 		this.orepository = orepository;
+		this.urepository = urepository;
 	}
 
 	public static void main(String[] args) {
@@ -32,11 +36,14 @@ public class CardatabaseApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		// Add owner objects and save these to db
-		Owner owner1 = new Owner("John" , "Johnson");
-		Owner owner2 = new Owner("Mary" , "Robinson");
-		orepository.saveAll(Arrays.asList(owner1, owner2));
+		Owner owner1 = new Owner("Mustafa" , "Ashfaq");
+		Owner owner2 = new Owner("John" , "Robinson");
+		Owner owner3 = new Owner("Mary" , "Robinson");
+		orepository.saveAll(Arrays.asList(owner1, owner2, owner3));
+			
 			
 		repository.save(new Car("Ford", "Mustang", "Red", "ADF-1121", 2023, 59000, owner1));
+		repository.save(new Car("Ford", "Escape", "Red", "ADP-1981", 2020, 35000, owner1));
 		repository.save(new Car("Nissan", "Leaf", "White", "SSJ-3002", 2020, 29000, owner2));
 		repository.save(new Car("Toyota", "Prius", "Silver", "KKO-0212", 2022, 39000, owner2));
 		
@@ -44,5 +51,9 @@ public class CardatabaseApplication implements CommandLineRunner {
 		for (Car car : repository.findAll()) {
 			logger.info("brand: {}, model: {}", car.getBrand(), car.getModel());
 		}	
+
+		//username: user password: user, username: admin password: super
+		urepository.save(new AppUser("user", "$2y$10$uVW2xFs6pQD77lPvUhsS0.qLDoYkwmESuKvSc3iyiZWHdaQtzqjR.", "USER"));
+		urepository.save(new AppUser("admin", "$2y$10$syyQonQHDXgcGcaZL/dh0eXsUE7/logJufYNIBNKv2R.AO20R7zZK", "ADMIN"));
 	}
 }
